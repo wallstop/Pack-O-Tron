@@ -174,7 +174,7 @@ public class Specimen{
 	public void calculateBadFitness(int numItemsFit)
 	{
 		//The more items fit, the "more fit" it is, regardless of object size. This is quick and dirty, can be improved
-		fitness = knapsack.length * knapsack[0].length * numItemsFit * 1000;
+		fitness = knapsack.length * knapsack[0].length * (numItems - numItemsFit) * 1000;
 	}
 	
 	/* Finds and sets fitness to minimum bounding box for current assignment, only if all objects are placed */
