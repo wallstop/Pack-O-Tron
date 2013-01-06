@@ -301,12 +301,16 @@ public class GeneticKnapsackAlgorithm {
 		return child;
 	}
 	
+	/* Generates a pool of children based off of two parents */
 	public static void generateChildren(Specimen parent1, Specimen parent2)
 	{		
+		childrenPopulation = new ArrayList<Specimen>();	//Resets the child pool
+		
 		for(int i = 0; i < numChildren; i++)
 			childrenPopulation.add(mutateGenome(parent1, parent2));
 	}
 	
+	/* Determines whether or not to replace individuals in the genePool with children, based on fitness */
 	public static boolean compete()
 	{
 		boolean returnValue;
@@ -323,30 +327,22 @@ public class GeneticKnapsackAlgorithm {
 		
 		if(childSecondStrongest.getFitness() < genePoolSecondLeastFit.getFitness())	//If the "weakest" strong child is stronger than the strongest "weak" genePool member, swap both
 		{
-			//genePool.get(indexOfTwoWeakest[0]).getRoomAssignment().delete();
 			genePool.set(genePool.indexOf(genePoolSecondLeastFit), childSecondStrongest);
 				
-			//genePool.get(indexOfTwoWeakest[1]).getRoomAssignment().delete();
 			genePool.set(genePool.indexOf(genePoolLeastFit), childStrongest);
 			returnValue = true;
 		}
 		//Otherwise, replace the weakest Specimen in the genePool with the strongest child.
 		else if(childStrongest.getFitness() < genePoolLeastFit.getFitness())
 		{	
-			//children[1].getRoomAssignment().delete();	//Deletes the room assignment for the weaker of the two children
-			//genePool.get(indexOfTwoWeakest[0]).getRoomAssignment().delete();
 			genePool.set(genePool.indexOf(genePoolLeastFit), childStrongest);		
 			returnValue = true;
 		}
-		else	//Deletes the room assignments
-		{
-			//children[1].getRoomAssignment().delete();
-			//children[0].getRoomAssignment().delete();
-		}
 		
-		return returnValue;
+		return returnValue;	//A replacement occured
 	}
 	
+	/* Selects two parents and updates the genePool */
 	public static void evolve()
 	{
 		int matingType;
@@ -357,7 +353,7 @@ public class GeneticKnapsackAlgorithm {
 		int parent2Index;
 		
 		matingType = rGen.nextInt(99);
-		childrenPopulation = new ArrayList<Specimen>();
+		
 		
 		if(matingType < 33)	//Two random parents
 		{
@@ -397,15 +393,17 @@ public class GeneticKnapsackAlgorithm {
 		generateChildren(parent1, parent2);
 	}
 	
+	/* Genetic "master" function. Call this to start the genetic process */
 	public static void darwinize()
 	{
 		int currentGeneration;
 		
 		currentGeneration = 0;
 		
-		printToFile();
+		printToFile();	//Writes the current-best Specimen to a file
 		
-		while((getMostFit(genePool).getFitness() != bestPossibleFitness) && (currentGeneration < numGenerations))
+		//If the best possible fit has been found, stop. Otherwise, continue until specified number of generations
+		while((getMostFit(genePool).getFitness() != bestPossibleFitness) && (currentGeneration < numGenerations))	
 		{
 			currentGeneration++;
 			System.out.println("Generation " + currentGeneration);
@@ -417,9 +415,10 @@ public class GeneticKnapsackAlgorithm {
 			
 		}
 		
-		printToFile();
+		printToFile();	//Updates the best speciment.
 	}
 	
+	/* Used for testing purposes */
 	public static void testSpecimen(ArrayList<KnapsackObject> objectArray)
 	{
 		Specimen sample;
@@ -456,7 +455,7 @@ public class GeneticKnapsackAlgorithm {
 			objectArray.add(new KnapsackObject(Integer.parseInt(tempInputArray[0]), Integer.parseInt(tempInputArray[1])));
 		}
 		
-		//testSpecimen(objectArray);
+		//testSpecimen(objectArray);	(Testing purposes)
 		initializeGenePool(objectArray);
 		darwinize();
 		
